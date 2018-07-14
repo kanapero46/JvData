@@ -458,6 +458,7 @@
             this.date3.Text = "3";
             this.date3.UseVisualStyleBackColor = true;
             this.date3.Visible = false;
+            this.date3.Click += new System.EventHandler(this.date3_Click);
             // 
             // date4
             // 

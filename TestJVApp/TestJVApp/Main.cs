@@ -406,7 +406,7 @@ namespace TestJVApp
 
             this.F3func = RC;         //Form3で表示する競馬場名
 
-            Form3 f3 = new Form3(RC, ArrayDefData, KaisaiInfo);
+            Form3 f3 = new Form3(RC, ArrayDefData, KaisaiInfo, KaisaiDate);
             f3.Show();
         }
 

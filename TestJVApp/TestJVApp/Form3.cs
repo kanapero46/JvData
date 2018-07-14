@@ -34,9 +34,9 @@ namespace TestJVApp
         int RCidx;
         int min,max;
         String[,] Info = new string[36, 3];
-        List<string> date = new List<string>();
+        List<String> date = new List<String>();
 
-        internal Form3(String RC, List<JvDataStructures> JvDataStr, KaisaiInfoStructures KaisaiInfo)
+        internal Form3(String RC, List<JvDataStructures> JvDataStr, KaisaiInfoStructures KaisaiInfo, List<String> KaisaiDate)
         {
             InitializeComponent();
             //開催競馬場情報のセット
@@ -47,7 +47,9 @@ namespace TestJVApp
             {
                 if (KaisaiInfo.Jomei[i].Equals(Course))
                 {
-                    max = KaisaiInfo.DayRaceMaxCounter[i]; 
+                    max = KaisaiInfo.DayRaceMaxCounter[i];
+                    date = KaisaiDate;
+
                     for (int j = 0; j<KaisaiInfo.DayRaceMaxCounter[i]; j++, tmp++)
                     {
                         Info[j, 0] = JvDataStr[tmp].RaceName;
@@ -347,6 +349,11 @@ namespace TestJVApp
                         break;
                 }
             }
+        }
+
+        private void date3_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void LabelToCourseColor(Label label, String TD)
