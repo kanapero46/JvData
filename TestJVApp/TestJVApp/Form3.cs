@@ -125,7 +125,8 @@ namespace TestJVApp
                         label3.Text = "";
                         label26.Text = ""; break;
                     }
-                    label3.Text = Course + Cnt + "Ｒ";
+                    button2.Text = Course + Cnt + "Ｒ";
+                    button2.Visible = true;
                     label26.Text = RaceName;
                     c1.Text = TD;
                     d1.Text = Dist + "m";
@@ -137,7 +138,8 @@ namespace TestJVApp
                         label4.Text = "";
                         label25.Text = ""; break;
                     }
-                    label4.Text = Course + Cnt + "Ｒ";
+                    button3.Text = Course + Cnt + "Ｒ";
+                    button3.Visible = true;
                     label25.Text = RaceName;
                     c2.Text = TD;
                     d2.Text = Dist + "m";
@@ -149,7 +151,8 @@ namespace TestJVApp
                         label5.Text ="";
                         label24.Text = ""; break;
                     }
-                    label5.Text = Course + Cnt + "Ｒ";
+                    button4.Text = Course + Cnt + "Ｒ";
+                    button4.Visible = true;
                     label24.Text = RaceName;
                     c3.Text = TD;
                     d3.Text = Dist + "m";
@@ -161,7 +164,8 @@ namespace TestJVApp
                         label6.Text = "";
                         label21.Text = "";
                     }
-                    label6.Text = Course + Cnt + "Ｒ";
+                    button5.Text = Course + Cnt + "Ｒ";
+                    button5.Visible = true;
                     label21.Text = RaceName;
                     c4.Text = TD;
                     d4.Text = Dist + "m";
@@ -173,7 +177,8 @@ namespace TestJVApp
                         label7.Text = "";
                         label22.Text = ""; break;
                     }
-                    label7.Text = Course + Cnt + "Ｒ";
+                    button6.Text = Course + Cnt + "Ｒ";
+                    button6.Visible = true;
                     label22.Text = RaceName;
                     c5.Text = TD;
                     d5.Text = Dist + "m";
@@ -185,7 +190,8 @@ namespace TestJVApp
                         label8.Text = "";
                         label23.Text = ""; break;
                     }
-                    label8.Text = Course + Cnt + "Ｒ";
+                    button7.Text = Course + Cnt + "Ｒ";
+                    button7.Visible = true;
                     label23.Text = RaceName;
                     c6.Text = TD;
                     d6.Text = Dist + "m";
@@ -197,7 +203,8 @@ namespace TestJVApp
                         label9.Text = "";
                         label15.Text = ""; break;
                     }
-                    label9.Text = Course + Cnt + "Ｒ";
+                    button8.Text = Course + Cnt + "Ｒ";
+                    button8.Visible = true;
                     label15.Text = RaceName;
                     c7.Text = TD;
                     d7.Text = Dist + "m";
@@ -209,7 +216,8 @@ namespace TestJVApp
                         label10.Text = "";
                         label16.Text = ""; break;
                     }
-                    label10.Text = Course + Cnt + "Ｒ";
+                    button9.Text = Course + Cnt + "Ｒ";
+                    button9.Visible = true;
                     label16.Text = RaceName;
                     c8.Text = TD;
                     d8.Text = Dist + "m";
@@ -221,7 +229,8 @@ namespace TestJVApp
                         label11.Text = "";
                         label17.Text = ""; break;
                     }
-                    label11.Text = Course + Cnt + "Ｒ";
+                    button10.Text = Course + Cnt + "Ｒ";
+                    button10.Visible = true;
                     label17.Text = RaceName;
                     c9.Text = TD;
                     d9.Text = Dist + "m";
@@ -233,7 +242,8 @@ namespace TestJVApp
                         label12.Text = "";
                         label18.Text = ""; break;
                     }
-                    label12.Text = Course + Cnt + "Ｒ";
+                    button11.Text = Course + Cnt + "Ｒ";
+                    button11.Visible = true;
                     label18.Text = RaceName;
                     c10.Text = TD;
                     d10.Text = Dist + "m";
@@ -245,7 +255,8 @@ namespace TestJVApp
                         label13.Text = "";
                         label19.Text = ""; break;
                     }
-                    label13.Text = Course + Cnt + "Ｒ";
+                    button12.Text = Course + Cnt + "Ｒ";
+                    button12.Visible = true;
                     label19.Text = RaceName;
                     c11.Text = TD;
                     d11.Text = Dist + "m";
@@ -257,7 +268,8 @@ namespace TestJVApp
                         label14.Text = "";
                         label20.Text = ""; break;
                     }
-                    label14.Text = Course + Cnt + "Ｒ";
+                    button13.Text = Course + Cnt + "Ｒ";
+                    button13.Visible = true;
                     label20.Text = RaceName;
                     c12.Text = TD;
                     d12.Text = Dist + "m";
@@ -351,14 +363,9 @@ namespace TestJVApp
             }
         }
 
-        private void date3_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void LabelToCourseColor(Label label, String TD)
         {
-            if(TD == null)
+            if (TD == null)
             {
                 return;
             }
@@ -368,13 +375,96 @@ namespace TestJVApp
             if (TD.Equals("ダート"))
             {
                 label.BackColor = Color.Brown;
-            }else 
+            }
+            else
             {
                 label.BackColor = Color.DarkGreen;
             }
+
+        }
+
+        private void date3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
             
         }
-        
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            functionDateRead(1);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            functionDateRead(2);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            functionDateRead(3);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            functionDateRead(4);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            functionDateRead(5);
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            functionDateRead(6);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            functionDateRead(7);
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            functionDateRead(8);
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            functionDateRead(9);
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            functionDateRead(10);
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            functionDateRead(11);
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            functionDateRead(12);
+        }
+
+        private void functionDateRead(int RaceNum)
+        {
+            Main main = new Main();
+            
+            main.ExtJvOpenEntrance(RaceNum,date[0]);
+            
+        }
     }
 
     class Form3Main

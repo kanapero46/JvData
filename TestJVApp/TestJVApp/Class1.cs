@@ -448,6 +448,23 @@ namespace TestJVApp
             return ("");
         }
 
+        public String ChgSexCdToString(String sexCD)
+        {
+            switch (sexCD)
+            {
+                case "1":
+                    return ("牡");
+                case "2":
+                    return ("牝");
+                case "3":
+                    return ("セン");
+                default:
+                    return "";
+            }
+
+
+        }
+
     }
 }
 
