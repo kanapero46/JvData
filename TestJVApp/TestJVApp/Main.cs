@@ -46,13 +46,18 @@ namespace TestJVApp
         public Double Omosa;        /* 斤量 RACE */
     }
 
-    struct JvRaceDataStructures     /* レース情報基本データ構造体 */
+    struct BloodData
     {
-        public JvRaceDataBasicStructures id;    /* 基本情報 */
         public String fHorse;       /* 父 MASTER */
         public String mHours;       /* 母 MASTER */
         public String BMS;          /* 母父 MASTER */
         public String BMS1;         /* 母母父 MASTER */
+    }
+
+    struct JvRaceDataStructures     /* レース情報基本データ構造体 */
+    {
+        public JvRaceDataBasicStructures id;    /* 基本情報 */
+        public BloodData Blood;     /* 血統情報 */
         public String Kyakushitu;   /* 脚質 RACE */
         public String sex;          /* 性別 RACE */
         public int Year;            /* 年齢 RACE */
@@ -62,11 +67,14 @@ namespace TestJVApp
     {
         public int ID;                /* レース情報ヘッダ */
         public JvRaceDataBasicStructures Common;    /* レース情報共通情報(馬名など) */
+        public BloodData Blood;
         public String BabaJotai;     /* 馬場状態 */
         public String Rank;          /* 着順 （取消などが入るためString型で保持 */
         public String Time;          /* 走破タイム */
         public int SyusouTosu;       /* 頭数 */
-        public int Bataiju;          /* 馬体重 */
+        public String Bataiju;          /* 馬体重 */
+        public String Zougen;        /* 馬体重増減 */
+        public String BataijuDiff;      /* 増減差 */
         public CONNER Conner;        /* コーナー順位 */
         public String final3F;       /* 上がり3F */
         public String AiteUma;       /* 相手馬 */
@@ -124,19 +132,18 @@ namespace TestJVApp
 
         String[] Horsename = new String[MaxRaceCount];
 
+        /* 過去走用 */
+        JvRaceDataMasterStructures[,] FormParfomance = new JvRaceDataMasterStructures[3,18]; /* 左　0：前走・・・　右：1頭目 */
+        List<JvRaceDataMasterStructures> tmpFormPerfomance = new List<JvRaceDataMasterStructures>();
+        List<JvRaceDataMasterStructures> tmpFormPerfomanceSE = new List<JvRaceDataMasterStructures>();
+        List<JvRaceDataMasterStructures> tmpFormPerfomanceRA = new List<JvRaceDataMasterStructures>();
+
         int[] RaceCounter = new int[MaxRaceCount / 12];
         int j = 0;
-        int jidx = 0;
+        int gCacheJoMeiIndex = 0;
 
         //出走馬データ
         String[,] Bamei = new string[3, 18];
-
-        /* イニシャライズ処理 */
-        private void InitMainFunction()
-        {
-
-
-        }
 
         public int JvOpenFunction(String Data, String Time, int opKind, ref int ReadCount, ref int DownloadCount, out String LastTime)
         {
@@ -159,7 +166,18 @@ namespace TestJVApp
             ret = f1.InitJv();
             CheckErrorCode(ret);
 
-            ret = prJvOpenFunc("20180712000000", "RCOV");
+            /* 今年日付を入れる */
+            DateTime dt = DateTime.Now;
+            if (date.Length == 3)
+            {
+                date = dt.Year.ToString() + "0" + date;
+            }
+            else
+            {
+                date = dt.Year.ToString() + date;
+            }
+
+            ret = prJvOpenFunc("20180719" + "000000", "RCOV");
             CheckErrorCode(ret);
 
             ret = JvReadFuncToRCOVData();
@@ -171,26 +189,24 @@ namespace TestJVApp
         private int JvReadFuncToRCOVData()
         {
             String buff = null;
-            int buffsize = 1500;
+            int buffsize = 2000;
             String fName = null;
             int skipCount = 0;
             int boolStatus = 0;
             Boolean eof = false;
-
+            
             do
             {
-                int ret = f1.ReadJv(out buff, out buffsize, out fName);
+                int ret = f1 .ReadJv(out buff, out buffsize, out fName);
 
                 if (ret == -1)
                 {
                     /* ファイルの切り替え */
                     if (eof == true)
                     {
-                        skipCount++;
-                        break;
+                       break;
                     } //２日分の開催データ取得完了
 
-                    eof = true;
                     f1.SkipJv();
                 }
                 else if (buff == null)
@@ -208,22 +224,92 @@ namespace TestJVApp
                     {
                         skipCount++;        //３回以上スキップしたら終了する。
                         f1.SkipJv();
+                        continue;
                     }
 
                 }
+                if(buff == null){
+                    f1.SkipJv();
+                    continue;
+                }
 
+                JvRaceDataMasterStructures MasterDataSe = new JvRaceDataMasterStructures();
                 switch (buff.Substring(0, 2))
                 {
+                    case "SE":
+                        /* 相手馬 */
+                        JVData_Struct.JV_SE_RACE_UMA Se = new JVData_Struct.JV_SE_RACE_UMA();
+                        
+                        Se.SetDataB(ref buff);
+                        MasterDataSe.Common.Waku = Int32.Parse(Se.Wakuban);
+                        MasterDataSe.Common.Umaban = Int32.Parse(Se.Umaban);
+                        MasterDataSe.Common.Bamei = Se.Bamei;
+                        MasterDataSe.Common.Jokkey = Se.KisyuRyakusyo;
+                        MasterDataSe.Common.Omosa = Int32.Parse(Se.Futan);
+                        MasterDataSe.Rank = Se.KakuteiJyuni;
+                        if (Se.KakuteiJyuni.Equals("01"))
+                        {
+                            MasterDataSe.AiteUma = "(" + Se.ChakuUmaInfo[0].Bamei + ")";
+                        }
+                        else
+                        {
+                            MasterDataSe.AiteUma = Se.ChakuUmaInfo[0].Bamei;
+                        }
+                        MasterDataSe.Bataiju = Se.BaTaijyu;
+                        MasterDataSe.Zougen = Se.ZogenFugo;             /* + - */
+                        MasterDataSe.BataijuDiff = Se.ZogenSa;
+
+                        MasterDataSe.final3F = Se.HaronTimeL3;
+                        MasterDataSe.DiffTime = Se.TimeDiff;
+                        MasterDataSe.Conner.conner1 = Int32.Parse(Se.Jyuni1c);
+                        MasterDataSe.Conner.conner2 = Int32.Parse(Se.Jyuni2c);
+                        MasterDataSe.Conner.conner3 = Int32.Parse(Se.Jyuni3c);
+                        MasterDataSe.Conner.conner4 = Int32.Parse(Se.Jyuni4c);
+                        MasterDataSe.Time = Se.Time;
+                        
+                        
+                        tmpFormPerfomanceSE.Add(MasterDataSe);
+                        break;
+                    case "RA":
+                        /* 頭数・馬場状態 */
+                        JVData_Struct.JV_RA_RACE Race = new JVData_Struct.JV_RA_RACE();
+                        Race.SetDataB(ref buff);
+                        String TrackCD = Race.TenkoBaba.SibaBabaCD + Race.TenkoBaba.DirtBabaCD;
+                        MasterDataSe.SyusouTosu = Int32.Parse(Race.SyussoTosu);
+                        MasterDataSe.BabaJotai = TrackCD;
+                        
+                        tmpFormPerfomanceRA.Add(MasterDataSe);
+                        break;
                     case "UM":
                         JVData_Struct.JV_UM_UMA Uma = new JVData_Struct.JV_UM_UMA();
-                        
+                        JvRaceDataMasterStructures MasterData = new JvRaceDataMasterStructures();
                         Uma.SetDataB(ref buff);
-
+                        MasterDataSe.Common.Bamei = Uma.Bamei;
+                        MasterDataSe.Blood.fHorse = Uma.Ketto3Info[0].Bamei;
+                        MasterDataSe.Blood.mHours = Uma.Ketto3Info[1].Bamei;
+                        MasterDataSe.Blood.BMS = Uma.Ketto3Info[4].Bamei;
+                        MasterDataSe.Blood.BMS1 = Uma.Ketto3Info[12].Bamei;
+                        tmpFormPerfomance.Add(MasterDataSe);
                         break;
                 }
-            }while (boolStatus == 0 && skipCount < 3);
+            }while (boolStatus == 0 && skipCount < 10);
 
+            /* 結合処理を加える */
+          //  JointmpFormPerfomanceData();
             return (0);
+        }
+
+        void JointmpFormPerfomanceData()
+        {
+            int one = tmpFormPerfomance.Count();
+            int two = tmpFormPerfomanceSE.Count();
+            int three = tmpFormPerfomanceRA.Count();
+
+            if (one == 0 || two == 0 || three == 0)
+            {
+                return;
+            }
+            
         }
 
         private int prJvOpenFunc(String date,String Data)
@@ -249,10 +335,10 @@ namespace TestJVApp
         public int JvReadFunc()
         {
             String buff = null;
-            int buffsize = 1500;
+            int buffsize = 2000;
             String fName = null;
 
-            int ret = RunJvReadFunc(out buff, out buffsize, out fName);
+            int ret = RunJvReadFunc(out buff, out buffsize, out fName, 0);
 
             return (ret);
 
@@ -263,11 +349,11 @@ namespace TestJVApp
          * */
         public int ExtJvReadFunc(ref String buff, ref int buffsize, ref String fName)
         {
-            return (RunJvReadFunc(out buff, out buffsize, out fName));
+            return (RunJvReadFunc(out buff, out buffsize, out fName,0));
         }
 
         /* JvReadのラッパー関数 */
-        private int RunJvReadFunc(out String buff, out int buffSize, out String fName)
+        private int RunJvReadFunc(out String buff, out int buffSize, out String fName, int funcNumber)
         {
 
             int ret;
@@ -330,8 +416,7 @@ namespace TestJVApp
                             /*JVData_Struct.JV_RA_RACE RaceData = new JVData_Struct.JV_RA_RACE();*/
                             RaceData.SetDataB(ref buff);
 
-                            RunJvReadFuncToRAData(RaceData);
-
+                            RunJvReadFuncToRAData(RaceData,funcNumber);
                             //  MessageBox.Show(RaceData.RaceInfo.Hondai);
 
                             break;
@@ -357,6 +442,7 @@ namespace TestJVApp
                             UmaMaster.SetDataB(ref buff);
 
                             RunJvReadMasterFunc(UmaMaster);
+                            
                             break;
                         default:
                             f1.SkipJv();
@@ -364,7 +450,7 @@ namespace TestJVApp
                     }
                     
                 }
-            }while (boolStatus == 0 && skipCount < 3);
+            } while (boolStatus == 0 && skipCount < 3);
 
             if (boolStatus == -1)
             {
@@ -377,107 +463,89 @@ namespace TestJVApp
         private int RunJvReadMasterFunc(JVData_Struct.JV_UM_UMA UmaMaster)
         {
 
+            JvRaceDataMasterStructures tmp = new JvRaceDataMasterStructures();
+            
             if (tmpRaceData.id.Bamei == null || UmaMaster.head.RecordSpec == null)
             {
                 return (RESULT_NG);
             }
             else if (tmpRaceData.id.Bamei.Equals(UmaMaster.Bamei))
             {
-                tmpRaceData.fHorse = UmaMaster.Ketto3Info[0].Bamei;
-                tmpRaceData.mHours = UmaMaster.Ketto3Info[1].Bamei;
-                tmpRaceData.BMS = UmaMaster.Ketto3Info[4].Bamei;
-                tmpRaceData.BMS1 = UmaMaster.Ketto3Info[12].Bamei;
+                tmpRaceData.Blood.fHorse = UmaMaster.Ketto3Info[0].Bamei;
+                tmpRaceData.Blood.mHours = UmaMaster.Ketto3Info[1].Bamei;
+                tmpRaceData.Blood.BMS = UmaMaster.Ketto3Info[4].Bamei;
+                tmpRaceData.Blood.BMS1 = UmaMaster.Ketto3Info[12].Bamei;
                 return (RESULT_OK);
             }
 
             return (RESULT_NG);
         }
 
-        private void RunJvReadFuncToRAData(JVData_Struct.JV_RA_RACE buff)
+        private void RunJvReadFuncToRAData(JVData_Struct.JV_RA_RACE buff, int funcNumber)
         {
-            //開催日データ・セット
-            setkaisaiDate(RaceData.id.MonthDay);
+            JvRaceDataMasterStructures RaceMaster = new JvRaceDataMasterStructures();
 
-            RaceNum.Add(Func.ChgJyoCDtoString(RaceData.id.JyoCD + RaceData.id.RaceNum + "Ｒ"));  //場名+レース番号＋R
-            String Old = Func.ChgYearOldString(RaceData.JyokenInfo.SyubetuCD, 1);      //３歳以上
-            String Joken = Func.CngRaceCla(RaceData.JyokenInfo.JyokenCD);           //５００万下
-            String TD = Func.CngTrackCdtoString(1, RaceData.TrackCD);                //芝・ダート
-
-            DefData.Date = RaceData.id.MonthDay;
-            DefData.Kai = Int32.Parse(RaceData.id.Kaiji);
-            DefData.Nichi = Int32.Parse(RaceData.id.Nichiji);
-            DefData.RaceCourse = Func.ChgJyoCDtoString(RaceData.id.JyoCD);            //場名
-            DefData.RaceNumber = Int32.Parse(RaceData.id.RaceNum);                    //レース番号
-            DefData.TD = Func.CngTrackCdtoString(1, RaceData.TrackCD);                //芝・ダート
-            DefData.Distance = Int32.Parse(RaceData.Kyori);                           //距離
-
-            //コース・距離
-            Track.Add(TD);
-            Distance.Add(RaceData.Kyori);
-
-
-            if (RaceData.RaceInfo.Hondai.TrimEnd().Equals(""))
+            if (funcNumber == 0)
             {
-                //条件レース
-                DefData.RaceName = Old + Joken;
-                HName.Add(Old + Joken);
-            }
-            else
-            {
-                String Name = RaceData.RaceInfo.Hondai.TrimEnd();
-                if (RaceData.GradeCD.Equals(" ") || RaceData.GradeCD.Equals("E"))
+                //開催日データ・セット
+                setkaisaiDate(RaceData.id.MonthDay);
+
+                RaceNum.Add(Func.ChgJyoCDtoString(RaceData.id.JyoCD + RaceData.id.RaceNum + "Ｒ"));  //場名+レース番号＋R
+                String Old = Func.ChgYearOldString(RaceData.JyokenInfo.SyubetuCD, 1);      //３歳以上
+                String Joken = Func.CngRaceCla(RaceData.JyokenInfo.JyokenCD);           //５００万下
+                String TD = Func.CngTrackCdtoString(1, RaceData.TrackCD);                //芝・ダート
+
+                DefData.Date = RaceData.id.MonthDay;
+                DefData.Kai = Int32.Parse(RaceData.id.Kaiji);
+                DefData.Nichi = Int32.Parse(RaceData.id.Nichiji);
+                DefData.RaceCourse = Func.ChgJyoCDtoString(RaceData.id.JyoCD);            //場名
+                DefData.RaceNumber = Int32.Parse(RaceData.id.RaceNum);                    //レース番号
+                DefData.TD = Func.CngTrackCdtoString(1, RaceData.TrackCD);                //芝・ダート
+                DefData.Distance = Int32.Parse(RaceData.Kyori);                           //距離
+
+                //コース・距離
+                Track.Add(TD);
+                Distance.Add(RaceData.Kyori);
+
+
+                if (RaceData.RaceInfo.Hondai.TrimEnd().Equals(""))
                 {
-                    /* 重賞レース以外　→　条件入れる */
-                    HName.Add(Name + "（" + Old + Joken + "）");
-                    DefData.RaceName = Name;
+                    //条件レース
+                    DefData.RaceName = Old + Joken;
+                    HName.Add(Old + Joken);
                 }
                 else
                 {
-                    //重賞レース　→　グレード入れる
-                    HName.Add(Name + "（" + Func.ChgGradeCdToString(RaceData.GradeCD) + "）");
-                    DefData.RaceName = Name + "(" + Func.ChgGradeCdToString(RaceData.GradeCD) + "）";
-                }
-            }
-
-            JyoMei = Func.ChgJyoCDtoString(RaceData.id.JyoCD);
-            tmp.Add(DefData);
-            KaisaiInfo.MaxRaceCounter++;    //最大レース数
-
-            /* 開催情報 */
-            try
-            {
-                if (KaisaiInfo.Jomei[jidx].Equals(JyoMei))
-                {
-                    ArrayDefData.Add(DefData);
-                    KaisaiInfo.Jomei[jidx] = DefData.RaceCourse;
-                    KaisaiInfo.DayRaceMaxCounter[jidx]++;
-                    jFlag = false;
-
-                }
-                else
-                {
-                    jidx++;
-                    KaisaiInfo.Jomei[jidx] = DefData.RaceCourse;
-                    KaisaiInfo.idx++;
-                    ArrayDefData.Add(DefData);
-                    KaisaiInfo.DayRaceMaxCounter[jidx]++;
-                }
-            }
-            catch (NullReferenceException ex)
-            {
-                if (jFlag == true)
-                {
-                    return;
+                    String Name = RaceData.RaceInfo.Hondai.TrimEnd();
+                    if (RaceData.GradeCD.Equals(" ") || RaceData.GradeCD.Equals("E"))
+                    {
+                        /* 重賞レース以外　→　条件入れる */
+                        HName.Add(Name + "（" + Old + Joken + "）");
+                        DefData.RaceName = Name;
+                    }
+                    else
+                    {
+                        //重賞レース　→　グレード入れる
+                        HName.Add(Name + "（" + Func.ChgGradeCdToString(RaceData.GradeCD) + "）");
+                        DefData.RaceName = Name + "(" + Func.ChgGradeCdToString(RaceData.GradeCD) + "）";
+                    }
                 }
 
-                jFlag = true;
-                KaisaiInfo.Jomei[jidx] = DefData.RaceCourse;
-                KaisaiInfo.idx++;
+                JyoMei = Func.ChgJyoCDtoString(RaceData.id.JyoCD);
+                tmp.Add(DefData);
+                KaisaiInfo.MaxRaceCounter++;    //最大レース数
+
+                /* 開催情報 */
+                FunctionKaisaiDateInfo(JyoMei);
+
                 ArrayDefData.Add(DefData);
-                KaisaiInfo.DayRaceMaxCounter[jidx]++;
-
             }
-
+            else if(funcNumber == 1)
+            {
+                /* 過去のデータ */
+                return;
+            }
+            
         }
 
 
@@ -648,6 +716,38 @@ namespace TestJVApp
             }
 
             return;
+        }
+
+        public void FunctionKaisaiDateInfo(String JoMei)
+        {
+            int ArrayCnt = KaisaiInfo.Jomei.Length;
+
+            for (int i = gCacheJoMeiIndex; i < ArrayCnt; i++,gCacheJoMeiIndex++)
+            {
+
+                if (KaisaiInfo.Jomei[i] == null)
+                {
+                    /* 場名に入れていない競馬場 */
+                    KaisaiInfo.Jomei[i] = JoMei;            /* 場名を入れる */
+                    KaisaiInfo.DayRaceMaxCounter[i] = 1;    /* 最初の１レース目を入れる */
+                    KaisaiInfo.idx++;
+                    return;
+                }
+                else if (KaisaiInfo.Jomei[i].Equals(JoMei))
+                {
+                    /* 場名にすでに入っている競馬場 */
+                    KaisaiInfo.idx++;                       /* ダミーカウント       */
+                    KaisaiInfo.DayRaceMaxCounter[i]++;      /* 各場１日最大レース数  */
+                    return;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            KaisaiInfo.Jomei[ArrayCnt] = JoMei;
+
         }
     }
 }
