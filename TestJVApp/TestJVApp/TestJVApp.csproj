@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="Interfacedef.cs" />
     <Compile Include="Kaisai.cs" />
     <Compile Include="Form3.cs">
       <SubType>Form</SubType>

@@ -7,5 +7,6 @@ interface iSoftWareDef
     /* 0：デバッグ処理なし、１：デバッグ処理あり */
     public static Boolean DEBUG_DEF = 0;
 
+    /* method定義 */
     public Boolean DEBUG();
 }

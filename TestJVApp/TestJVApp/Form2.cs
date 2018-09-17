@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InterfaceDef;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,9 +11,9 @@ using System.Windows.Forms;
 
 namespace TestJVApp
 {
-    public partial class Form2 : Form
+    public partial class Form2 : Form, Interfacedef
     {
-        public Form2()
+        public Form2()  
         {
             InitializeComponent();
         }
