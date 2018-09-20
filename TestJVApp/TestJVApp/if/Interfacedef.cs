@@ -1,11 +1,15 @@
 ﻿using System;
-using iJvUnit;
+using nDate;
+using nJvUnit;
+using nScsDef;
+using nSoftwareDef;
 
 namespace InterfaceDef
 {
-    interface Interfacedef : iJvUnit, iScsdef
+    interface iInterfacedef
     {
         /* すべてのインターフェイスをこのファイルでインクルードする               */
         /* 処理ではこのファイルをインクルードすることで、すべての処理を動作させる　*/
+
     }
 }

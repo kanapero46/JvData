@@ -1,4 +1,5 @@
 ﻿using InterfaceDef;
+using nJvUnit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,10 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TestJVApp.comFunc;
 
 namespace TestJVApp
 {
-    public partial class Form2 : Form, Interfacedef
+    public partial class Form2 : Form
     {
         public Form2()  
         {
@@ -20,7 +22,6 @@ namespace TestJVApp
 
         private void Form2_Load(object sender, EventArgs e)
         {
-
         }
 
         public int InitJv()

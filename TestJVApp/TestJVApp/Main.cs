@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LibJvSysCore;
 
 namespace TestJVApp
 {  
@@ -92,7 +93,8 @@ namespace TestJVApp
         JVData_Struct JvData = new JVData_Struct();
         JVData_Struct.JV_RA_RACE RaceData = new JVData_Struct.JV_RA_RACE();
         JVData_Struct.JV_SE_RACE_UMA RaceUmaData = new JVData_Struct.JV_SE_RACE_UMA();
-        Form2 f1 = new Form2();
+        Form2 JvMain = new Form2();
+        Form1 f1 = new Form1();
 
         /* 各種データ：定数・変数 */
         private int JRAKeibajo = 10;        //JRAの競馬場最大値
@@ -141,14 +143,14 @@ namespace TestJVApp
         int[] RaceCounter = new int[MaxRaceCount / 12];
         int j = 0;
         int gCacheJoMeiIndex = 0;
-
+        
         //出走馬データ
         String[,] Bamei = new string[3, 18];
 
         public int JvOpenFunction(String Data, String Time, int opKind, ref int ReadCount, ref int DownloadCount, out String LastTime)
         {
             int ret;
-            ret = f1.OpenJv(Data, Time, opKind, ref ReadCount, ref DownloadCount, out LastTime);
+            ret = JvMain.OpenJv(Data, Time, opKind, ref ReadCount, ref DownloadCount, out LastTime);
             //f1.CloseJv();
             //ret = f1.RTJvOpen("0B15", "20180623");
 
@@ -163,7 +165,7 @@ namespace TestJVApp
             InitFunction();
 
             /* JvDataの初期化 */
-            ret = f1.InitJv();
+            ret = JvMain.InitJv();
             CheckErrorCode(ret);
 
             /* 今年日付を入れる */
@@ -197,7 +199,7 @@ namespace TestJVApp
             
             do
             {
-                int ret = f1 .ReadJv(out buff, out buffsize, out fName);
+                int ret = JvMain.ReadJv(out buff, out buffsize, out fName);
 
                 if (ret == -1)
                 {
@@ -207,7 +209,7 @@ namespace TestJVApp
                        break;
                     } //２日分の開催データ取得完了
 
-                    f1.SkipJv();
+                    JvMain.SkipJv();
                 }
                 else if (buff == null)
                 {
@@ -223,16 +225,16 @@ namespace TestJVApp
                     else
                     {
                         skipCount++;        //３回以上スキップしたら終了する。
-                        f1.SkipJv();
+                        JvMain.SkipJv();
                         continue;
                     }
 
                 }
                 if(buff == null){
-                    f1.SkipJv();
+                    JvMain.SkipJv();
                     continue;
                 }
-
+                
                 JvRaceDataMasterStructures MasterDataSe = new JvRaceDataMasterStructures();
                 switch (buff.Substring(0, 2))
                 {
@@ -364,7 +366,7 @@ namespace TestJVApp
             
 
             do {
-                ret = f1.ReadJv(out buff, out buffSize, out fName);
+                ret = JvMain.ReadJv(out buff, out buffSize, out fName);
                 
                 if (ret == -1)
                 {
@@ -375,7 +377,7 @@ namespace TestJVApp
                     } //２日分の開催データ取得完了
 
                     eof = true;
-                    f1.SkipJv();
+                    JvMain.SkipJv();
                 }
                 else if (buff == null)
                 {
@@ -391,7 +393,7 @@ namespace TestJVApp
                     else
                     {
                         skipCount++;        //３回以上スキップしたら終了する。
-                        f1.SkipJv();
+                        JvMain.SkipJv();
                     }
                     
                 }
@@ -423,7 +425,7 @@ namespace TestJVApp
                         case "SE":
                             /* 馬毎レース情報 */
                             RaceUmaData.SetDataB(ref buff);
-
+                            
                             tmpRaceData.id.Waku = Int32.Parse(RaceUmaData.Wakuban);
                             tmpRaceData.id.Umaban = Int32.Parse(RaceUmaData.Umaban);
                             tmpRaceData.id.Bamei = RaceUmaData.Bamei;
@@ -445,7 +447,7 @@ namespace TestJVApp
                             
                             break;
                         default:
-                            f1.SkipJv();
+                            JvMain.SkipJv();
                             break;
                     }
                     
@@ -490,7 +492,7 @@ namespace TestJVApp
                 //開催日データ・セット
                 setkaisaiDate(RaceData.id.MonthDay);
 
-                RaceNum.Add(Func.ChgJyoCDtoString(RaceData.id.JyoCD + RaceData.id.RaceNum + "Ｒ"));  //場名+レース番号＋R
+                RaceNum.Add(LibJvSysCore.libJvSysCore.(RaceData.id.JyoCD + RaceData.id.RaceNum + "Ｒ"));  //場名+レース番号＋R
                 String Old = Func.ChgYearOldString(RaceData.JyokenInfo.SyubetuCD, 1);      //３歳以上
                 String Joken = Func.CngRaceCla(RaceData.JyokenInfo.JyokenCD);           //５００万下
                 String TD = Func.CngTrackCdtoString(1, RaceData.TrackCD);                //芝・ダート
@@ -548,17 +550,19 @@ namespace TestJVApp
             
         }
 
-
+        /** Form1から呼び出し
+         * 開催競馬場の取得
+         */
         public Boolean runManinFunction(String date)
         {
             int ret = 0;
-
+            String ErrMessage = "";  //v00.03-00 ライブラリ対応
             InitFunction();
 
             /* JvDataの初期化 */
-            ret = f1.InitJv();
-            CheckErrorCode(ret);
-
+            ret = JvMain.InitJv();
+            CheckErrorCode(ret);    //エラーチェック
+            if (LibScs.LibScsCheckErrorCode(ret,ref ErrMessage) == false) { f1.ThisClose(ErrMessage); }
 
             /* JvDataをOpen */
             String Data = "RACE";
@@ -569,15 +573,15 @@ namespace TestJVApp
             /* JvDateの読み込み */
             ret = JvReadFunc();
             if(ret <= -3)CheckErrorCode(ret);
-
             
-            f1.CloseJv();
+            JvMain.CloseJv();
             return (true);
         }
 
         /* 初期化(Initialize) */
         private void InitFunction()
         {
+               
             KaisaiDate.Clear();
             RaceNum.Clear();
             HName.Clear();
@@ -602,12 +606,12 @@ namespace TestJVApp
 
         public void CheckErrorCode(int ret)
         {
-            Form1 f1 = new Form1();
+           
             if (ret < 0)
             {
-                MessageBox.Show("エラーにより終了します。" + ret);
-                this.f1.CloseJv();
-                f1.ThisClose();
+                MessageBox.Show("" + ret);
+                this.JvMain.CloseJv();
+                f1.ThisClose("エラーにより終了します。" );
             }
         }
 

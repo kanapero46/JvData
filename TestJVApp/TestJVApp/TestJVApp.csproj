@@ -48,7 +48,15 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Class2.cs" />
+    <Compile Include="Class3.cs" />
+    <Compile Include="comFunc\JvUnit.cs" />
+    <Compile Include="comFunc\Scs.cs" />
+    <Compile Include="if\iDate.cs" />
+    <Compile Include="if\iJvUnit.cs" />
     <Compile Include="Interfacedef.cs" />
+    <Compile Include="if\Interfacedef.cs" />
+    <Compile Include="if\iScsdef.cs" />
+    <Compile Include="if\iSoftWareDef.cs" />
     <Compile Include="Kaisai.cs" />
     <Compile Include="Form3.cs">
       <SubType>Form</SubType>
@@ -122,6 +130,15 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LibJvSysCore\LibJvSysCore.csproj">
+      <Project>{86a16da6-6728-41f3-b44c-637ed577ae05}</Project>
+      <Name>LibJvSysCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using JVDTLabLib;
+using LibJvSysCore;
 
 namespace TestJVApp
 { 
@@ -31,6 +32,7 @@ namespace TestJVApp
         {
             InitializeComponent();
             DayOfWeek uWeekday = dtToday.DayOfWeek; //今日の曜日
+            
             if (uWeekday == DayOfWeek.Saturday)
             {
                 //日付に指定できるのは日曜+1までにする。
@@ -55,12 +57,13 @@ namespace TestJVApp
                     MessageBox.Show("エラーが発生しました。");
                     break;
             }
-
             return 1;
         }
 
-        public void ThisClose()
+        public void ThisClose(String ErrMessage)
         {
+            MessageBox.Show(ErrMessage);
+            axJVLink1.JVClose();
             this.Close();
         }
 
@@ -249,7 +252,7 @@ namespace TestJVApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            libJvSysCore.GetibraryVersion(); 
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
