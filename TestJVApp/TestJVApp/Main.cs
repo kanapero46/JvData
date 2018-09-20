@@ -492,7 +492,7 @@ namespace TestJVApp
                 //開催日データ・セット
                 setkaisaiDate(RaceData.id.MonthDay);
 
-                RaceNum.Add(LibJvSysCore.libJvSysCore.(RaceData.id.JyoCD + RaceData.id.RaceNum + "Ｒ"));  //場名+レース番号＋R
+                RaceNum.Add((libJvSysConv.LibJvConvCourceNum2String(RaceData.id.JyoCD) + RaceData.id.RaceNum + "Ｒ"));  //場名+レース番号＋R
                 String Old = Func.ChgYearOldString(RaceData.JyokenInfo.SyubetuCD, 1);      //３歳以上
                 String Joken = Func.CngRaceCla(RaceData.JyokenInfo.JyokenCD);           //５００万下
                 String TD = Func.CngTrackCdtoString(1, RaceData.TrackCD);                //芝・ダート
@@ -650,6 +650,7 @@ namespace TestJVApp
          * */
         public void ShowMainFunction(String RC)
         {
+            RC = libJvSysConv.LibJvConvButtonName2String(RC);
             String[,] TD = new String[MaxRaceCount,2];
             for (int i = 0; i<MaxRaceCount; i++)
             {

@@ -1,6 +1,4 @@
 ﻿using AxJVDTLabLib;
-using InterfaceDef;
-using nJvUnit;
 using System;
 using System.Collections.Generic;
 using System.Linq;

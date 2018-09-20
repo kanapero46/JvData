@@ -51,12 +51,6 @@
     <Compile Include="Class3.cs" />
     <Compile Include="comFunc\JvUnit.cs" />
     <Compile Include="comFunc\Scs.cs" />
-    <Compile Include="if\iDate.cs" />
-    <Compile Include="if\iJvUnit.cs" />
-    <Compile Include="Interfacedef.cs" />
-    <Compile Include="if\Interfacedef.cs" />
-    <Compile Include="if\iScsdef.cs" />
-    <Compile Include="if\iSoftWareDef.cs" />
     <Compile Include="Kaisai.cs" />
     <Compile Include="Form3.cs">
       <SubType>Form</SubType>

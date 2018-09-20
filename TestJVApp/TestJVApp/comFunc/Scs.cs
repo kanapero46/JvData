@@ -1,8 +1,6 @@
-﻿using nSoftwareDef;
-using nScsDef;
-using System;
+﻿using System;
 
-public class Scs : iSoftWareDef, iScsdef
+public class Scs 
 {
     /* 0：デバッグ処理なし、１：デバッグ処理あり */
     public static Boolean DEBUG_DEF = false;
@@ -14,9 +12,9 @@ public class Scs : iSoftWareDef, iScsdef
     private static readonly Boolean MASPRO_DEF = false;
 
     /* Overide to iScsDef */
-    String iScsdef.ShowSoftWareVersion(){ return VERSION_DEF; }
+    String ShowSoftWareVersion(){ return VERSION_DEF; }
 
     /* Overide to iSoftWareDef */
-    bool iSoftWareDef.DEBUG(){ return DEBUG_DEF; }
+    bool DEBUG(){ return DEBUG_DEF; }
 }
  

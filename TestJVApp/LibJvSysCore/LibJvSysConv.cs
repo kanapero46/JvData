@@ -81,6 +81,37 @@ namespace LibJvSysCore
             }
         }
 
+        /** 押下されたボタンから競馬場名を返す。Form1→Main.cs→ライブラリ
+         */
+        public static String LibJvConvButtonName2String(String sender)
+        {
+            switch (sender)
+            {
+                case "sapporo":
+                    return ("札幌");
+                case "hakodate":
+                    return ("函館");
+                case "fukushima":
+                    return ("福島");
+                case "niigata":
+                    return ("新潟");
+                case "tokyo":
+                    return ("東京");
+                case "nakayama":
+                    return ("中山");
+                case "chukyo":
+                    return ("中京");
+                case "kyoto":
+                    return ("京都");
+                case "hanshin":
+                    return ("阪神");
+                case "kokura":
+                    return ("小倉");
+                default:
+                    return ("");
+            }
+        }
+
 
     }
 }

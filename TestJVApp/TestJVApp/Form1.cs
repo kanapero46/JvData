@@ -186,6 +186,7 @@ namespace TestJVApp
         private void sapporo_Click(object sender, EventArgs e)
         {
             main.ShowMainFunction("札幌");
+            main.ShowMainFunction(((Button)sender).Name);
         }
 
         private void hakodate_Click(object sender, EventArgs e)
