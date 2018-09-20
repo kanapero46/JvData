@@ -93,7 +93,7 @@ namespace TestJVApp
         JVData_Struct JvData = new JVData_Struct();
         JVData_Struct.JV_RA_RACE RaceData = new JVData_Struct.JV_RA_RACE();
         JVData_Struct.JV_SE_RACE_UMA RaceUmaData = new JVData_Struct.JV_SE_RACE_UMA();
-        Form2 JvMain = new Form2();
+        JvIfForm JvMain = new JvIfForm();
         Form1 f1 = new Form1();
 
         /* 各種データ：定数・変数 */

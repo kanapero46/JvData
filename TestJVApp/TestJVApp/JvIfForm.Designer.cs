@@ -1,6 +1,6 @@
 ﻿namespace TestJVApp
 {
-    partial class Form2
+    partial class JvIfForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,36 +28,36 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
-            this.axJVLink1 = new AxJVDTLabLib.AxJVLink();
-            ((System.ComponentModel.ISupportInitialize)(this.axJVLink1)).BeginInit();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JvIfForm));
+            this.JvIf1 = new AxJVDTLabLib.AxJVLink();
+            ((System.ComponentModel.ISupportInitialize)(this.JvIf1)).BeginInit();
             this.SuspendLayout();
             // 
-            // axJVLink1
+            // JvIf1
             // 
-            this.axJVLink1.Enabled = true;
-            this.axJVLink1.Location = new System.Drawing.Point(35, 1);
-            this.axJVLink1.Name = "axJVLink1";
-            this.axJVLink1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axJVLink1.OcxState")));
-            this.axJVLink1.Size = new System.Drawing.Size(192, 192);
-            this.axJVLink1.TabIndex = 0;
+            this.JvIf1.Enabled = true;
+            this.JvIf1.Location = new System.Drawing.Point(13, 13);
+            this.JvIf1.Name = "JvIf1";
+            this.JvIf1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("JvIf1.OcxState")));
+            this.JvIf1.Size = new System.Drawing.Size(192, 192);
+            this.JvIf1.TabIndex = 0;
             // 
-            // Form2
+            // JvIfForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(257, 150);
-            this.Controls.Add(this.axJVLink1);
-            this.Name = "Form2";
-            this.Text = "Form2";
-            this.Load += new System.EventHandler(this.Form2_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.axJVLink1)).EndInit();
+            this.ClientSize = new System.Drawing.Size(234, 211);
+            this.Controls.Add(this.JvIf1);
+            this.Name = "JvIfForm";
+            this.Text = "JvIfForm";
+            this.Load += new System.EventHandler(this.JvIfForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.JvIf1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private AxJVDTLabLib.AxJVLink axJVLink1;
+        private AxJVDTLabLib.AxJVLink JvIf1;
     }
 }
